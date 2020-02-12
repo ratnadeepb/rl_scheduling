@@ -17,9 +17,14 @@ I am looking at load balancing, possibly in edge clusters, as soft real time sys
 
 ### Project equations
 
-Goal := $min\sum_i\frac{max[0, (t_{ij} - d_{ij})]}{d_{ij}}$
+$$Goal := min\sum_{i=1}^{N(T)}max[0, \frac{(t_{ij} - d_{ij})}{d_{ij}}]$$
 
-$$d_{ij} = avg[t_{ij}] + c_j std[t_{ij}]$$
+$$d_{ij} = \mu_{t_{ij}} + c_j\sigma_{t_{ij}}$$
 $$c_j = 1 + \frac{1}{p_j}$$
+$T$ is the time interval at which the reward is measured and $N(T)$ is the number of jobs that go through that system in that time.
 
-where $p_{ij}$ := priority of task type j and $1<c_{ij}<2$
+where $p_{ij}$ := priority of task type j and $c_j \in(1,2)$
+
+### Storing states
+
+There can be a predefined number of distinct states, K. Each state can be stored as a mean vector $\bar{\mu}$ and a covariance matrix $\Sigma$. The states can be recalibrated if the number of observed data points that lie outside all states; $\bar{s} \notin \{\bar{\mu_k} \pm 3\Sigma_k\} \forall k\in K$; cross a predefined threshold, $N(k)$. Recalibration will include another observation stage.
