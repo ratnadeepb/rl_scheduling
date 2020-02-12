@@ -9,7 +9,7 @@ I am looking at load balancing, possibly in edge clusters, as soft real time sys
 
 - Once a determination of states are made, use reinforcement learning to find an optimal scheduling solution that looks to reduce tardiness given a generic optimization goal.
   - Optimization goal can be provided in terms of a general service time.
-  - tardiness := max[0, (t - d)]
+  - tardiness := $max[0, (t - d)]$
     1. t -> total time spent in the system by a process
     2. d -> deadline for the process. If the process does not have a specific deadline then d defaults to the optimization goal.
 
@@ -18,6 +18,10 @@ I am looking at load balancing, possibly in edge clusters, as soft real time sys
 ### Project equations
 
 $$Goal := min\sum_{i=1}^{N(T)}max[0, \frac{(t_{ij} - d_{ij})}{d_{ij}}]$$
+So,
+
+$$G_t = max \sum_{i=1}^{N(T)}max[0, -\frac{(t_{ij} - d_{ij})}{d_{ij}}]$$
+where,
 
 $$d_{ij} = \mu_{t_{ij}} + c_j\sigma_{t_{ij}}$$
 $$c_j = 1 + \frac{1}{p_j}$$
@@ -28,3 +32,7 @@ where $p_{ij}$ := priority of task type j and $c_j \in(1,2)$
 ### Storing states
 
 There can be a predefined number of distinct states, K. Each state can be stored as a mean vector $\bar{\mu}$ and a covariance matrix $\Sigma$. The states can be recalibrated if the number of observed data points that lie outside all states; $\bar{s} \notin \{\bar{\mu_k} \pm 3\Sigma_k\} \forall k\in K$; cross a predefined threshold, $N(k)$. Recalibration will include another observation stage.
+
+### Load Balancing
+
+The Weighted Round Robin (WRR) forms the basis of the load balancing algorithm. Different types of tasks have different priorities. For each task type, the backend servers can have different weights. The idea is to readjust the weights of the servers, for each task type, so that the overall resources are distributed between the jobs in the system so as to maximize $G_t$.
