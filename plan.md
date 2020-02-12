@@ -17,7 +17,9 @@ I am looking at load balancing, possibly in edge clusters, as soft real time sys
 
 ### Project equations
 
-Goal := $$min\sum_i\frac{max[0, (t_{ij} - d_{ij})]}{d_{ij}}$$
+Goal := $min\sum_i\frac{max[0, (t_{ij} - d_{ij})]}{d_{ij}}$
+
 $$d_{ij} = avg[t_{ij}] + c_j std[t_{ij}]$$
 $$c_j = 1 + \frac{1}{p_j}$$
-where $$p_{ij}$$ := priority of task type j and $$1<c_{ij}<2$$
+
+where $p_{ij}$ := priority of task type j and $1<c_{ij}<2$
