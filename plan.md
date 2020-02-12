@@ -36,3 +36,7 @@ There can be a predefined number of distinct states, K. Each state can be stored
 ### Load Balancing
 
 The Weighted Round Robin (WRR) forms the basis of the load balancing algorithm. Different types of tasks have different priorities. For each task type, the backend servers can have different weights. The idea is to readjust the weights of the servers, for each task type, so that the overall resources are distributed between the jobs in the system so as to maximize $G_t$.
+
+### Training the RL model
+
+#### TODO
