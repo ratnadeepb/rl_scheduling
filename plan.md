@@ -12,3 +12,12 @@ I am looking at load balancing, possibly in edge clusters, as soft real time sys
   - tardiness := max[0, (t - d)]
     1. t -> total time spent in the system by a process
     2. d -> deadline for the process. If the process does not have a specific deadline then d defaults to the optimization goal.
+
+## Plan
+
+### Project equations
+
+Goal := $$min\sum_i\frac{max[0, (t_{ij} - d_{ij})]}{d_{ij}}$$
+$$d_{ij} = avg[t_{ij}] + c_j std[t_{ij}]$$
+$$c_j = 1 + \frac{1}{p_j}$$
+where $$p_{ij}$$ := priority of task type j and $$1<c_{ij}<2$$
