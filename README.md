@@ -126,7 +126,7 @@ cd ~/nginx-1.17.8
             --conf-path=/etc/nginx/nginx.conf \
             --error-log-path=/var/log/nginx/error.log \
             --http-log-path=/var/log/nginx/access.log \
-			--add-module=/path/to/nginx-module-vts \
+   --add-module=/path/to/nginx-module-vts \
             --pid-path=/run/nginx.pid \
             --lock-path=/var/lock/nginx.lock \
             --user=www-data \
