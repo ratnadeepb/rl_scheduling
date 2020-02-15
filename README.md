@@ -129,8 +129,6 @@ cd ~/nginx-1.17.8
             --add-module=/path/to/nginx-module-vts \
             --pid-path=/run/nginx.pid \
             --lock-path=/var/lock/nginx.lock \
-            --user=www-data \
-            --group=www-data \
             --build=Ubuntu \
             --http-client-body-temp-path=/var/lib/nginx/body \
             --http-fastcgi-temp-path=/var/lib/nginx/fastcgi \
