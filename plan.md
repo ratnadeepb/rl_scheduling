@@ -136,6 +136,10 @@ Now that we have our states, a goal and our control, the role of the reinforceme
 
 ## Training the RL model
 
+### Major issue
+
+The desirable states may be unobservable unless states are observed and classified during training.
+
 ### TODO
 
 How to train the model? Especially with simulation.
