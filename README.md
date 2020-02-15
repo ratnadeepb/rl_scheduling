@@ -75,12 +75,145 @@ Each of these `service groups` map to a specific request type. As of now they al
 
 The following statistics are collected from say `server1` for the `compose` request type:
 
-1.  `requestCounter` - Number of requests of this type forwarded to this server
-2.  `inBytes` and `outBytes` are self explanatory
-3.  `Non 2xx/3xx responses` simply encompass all `1xx`, `4xx` and `5xx` responses from the backend.
-4.  `requestMsecCounter` number of accumulated request processing time in milliseconds
-5.  `maxFails` is the number of fails that must occur during `failTimeout` to mark the server unavailable.
-6.  `backup` if the server is being used as a backup
-7.  `down` if the server is marked as being unavailable.
+1. `requestCounter` - Number of requests of this type forwarded to this server
+2. `inBytes` and `outBytes` are self explanatory
+3. `Non 2xx/3xx responses` simply encompass all `1xx`, `4xx` and `5xx` responses from the backend.
+4. `requestMsecCounter` number of accumulated request processing time in milliseconds
+5. `maxFails` is the number of fails that must occur during `failTimeout` to mark the server unavailable.
+6. `backup` if the server is being used as a backup
+7. `down` if the server is marked as being unavailable.
 
 We are using `weight` as our control; so it's not part of the `state`.
+
+## Building NGINX for this project
+
+Mostly, this [guide](https://www.vultr.com/docs/how-to-compile-nginx-from-source-on-ubuntu-16-04) can be followed.
+
+### Prerequisites
+
+```bash
+sudo apt install build-essential -y
+
+# PCRE version 4.4 - 8.40
+wget https://ftp.pcre.org/pub/pcre/pcre-8.40.tar.gz && tar xzvf pcre-8.40.tar.gz
+
+# zlib version 1.1.3 - 1.2.11
+wget http://www.zlib.net/zlib-1.2.11.tar.gz && tar xzvf zlib-1.2.11.tar.gz
+
+# OpenSSL version 1.0.2 - 1.1.0
+wget https://www.openssl.org/source/openssl-1.1.0f.tar.gz && tar xzvf openssl-1.1.0f.tar.gz
+
+```
+
+### Get NGINX (latest, as of this document, 1.17.8)
+
+```bash
+wget https://nginx.org/download/nginx-1.17.8.tar.gz
+
+tar zxvf nginx-1.17.8.tar.gz
+
+rm -rf *.tar.gz
+
+cd ~/nginx-1.17.8
+```
+
+### Configure and install NGINX
+
+```bash
+./configure --prefix=/usr/share/nginx \
+            --sbin-path=/usr/sbin/nginx \
+            --modules-path=/usr/lib/nginx/modules \
+            --conf-path=/etc/nginx/nginx.conf \
+            --error-log-path=/var/log/nginx/error.log \
+            --http-log-path=/var/log/nginx/access.log \
+			--add-module=/path/to/nginx-module-vts \
+            --pid-path=/run/nginx.pid \
+            --lock-path=/var/lock/nginx.lock \
+            --user=www-data \
+            --group=www-data \
+            --build=Ubuntu \
+            --http-client-body-temp-path=/var/lib/nginx/body \
+            --http-fastcgi-temp-path=/var/lib/nginx/fastcgi \
+            --http-proxy-temp-path=/var/lib/nginx/proxy \
+            --http-scgi-temp-path=/var/lib/nginx/scgi \
+            --http-uwsgi-temp-path=/var/lib/nginx/uwsgi \
+            --with-openssl=../openssl-1.1.0f \
+            --with-openssl-opt=enable-ec_nistp_64_gcc_128 \
+            --with-openssl-opt=no-nextprotoneg \
+            --with-openssl-opt=no-weak-ssl-ciphers \
+            --with-openssl-opt=no-ssl3 \
+            --with-pcre=../pcre-8.40 \
+            --with-pcre-jit \
+            --with-zlib=../zlib-1.2.11 \
+            --with-compat \
+            --with-file-aio \
+            --with-threads \
+            --with-http_addition_module \
+            --with-http_auth_request_module \
+            --with-http_dav_module \
+            --with-http_flv_module \
+            --with-http_gunzip_module \
+            --with-http_gzip_static_module \
+            --with-http_mp4_module \
+            --with-http_random_index_module \
+            --with-http_realip_module \
+            --with-http_slice_module \
+            --with-http_ssl_module \
+            --with-http_sub_module \
+            --with-http_stub_status_module \
+            --with-http_v2_module \
+            --with-http_secure_link_module \
+            --with-mail \
+            --with-mail_ssl_module \
+            --with-stream \
+            --with-stream_realip_module \
+            --with-stream_ssl_module \
+            --with-stream_ssl_preread_module \
+            --with-debug \
+            --with-cc-opt='-g -O2 -fPIE -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2' \
+            --with-ld-opt='-Wl,-Bsymbolic-functions -fPIE -pie -Wl,-z,relro -Wl,-z,now'
+make
+sudo make install
+```
+
+### Clean directory and test
+
+```bash
+cd ~
+rm -r nginx-1.17.8/ openssl-1.1.0f/ pcre-8.40/ zlib-1.2.11/
+
+# NGINX version
+sudo nginx -v && sudo nginx -V
+
+# Testing config file
+sudo nginx -t
+```
+
+### NGINX operations
+
+```bash
+# Run nginx
+sudo nginx
+
+# Reload after changing conf
+sudo nginx -s reload
+
+# Stop gracefully
+sudo nginx -s stop
+
+# Quit
+sudo nginx -s quit
+```
+
+### NGINX file locations
+
+```none
+/usr/share/nginx
+/usr/sbin/nginx
+/etc/nginx
+/var/log/nginx
+
+# Config file and logs
+/etc/nginx/nginx.conf
+/var/lib/nginx
+```
