@@ -37,7 +37,7 @@ A load generator has been written in C - `gen_load.c`
 - There are four threads in the program. Three of them run one request type while the fourth simply reports time remaining on the test.
 - The testing threads choose a distribution at random from `exponential`, `normal`, `fixed` and `zipf`.
 - Then each thread runs the test for a random amount of time between 30 seconds and 10 minutes.
-- The number of requests are randomly chosen to be between 1000 and 2000 requests per second.
+- The number of requests are randomly chosen to be between 100 and 2000 requests per second.
 - After each testing period is complete, the thread backs off for a random amount of time between 10 and 100 seconds.
 - This can be run simply as `./gen_load`
 
@@ -63,6 +63,23 @@ This command does the following:
 - Starts the load generation in the background
 - Starts collecting statistics from the nginx server and saves it into the provided file name.
 
+A separate script `change_nginx_weight.py` needs to run on the nginx/proxy node. This script changes the weights of the different servers after a while.
+
+### Manually running things on separate windows or tmux panes (for better control)
+
+On the client node
+
+```bash
+./gen_load
+python get_states.py nginx_state_for_clustering.json
+```
+
+On the nginx node
+
+```bash
+sudo /home/ratnadeepb/miniconda3/envs/py3_env/bin/python change_nginx_weights.py 2
+```
+
 ## How the statistics look
 
 There are three upstream groups (`service groups`) created:
@@ -75,13 +92,11 @@ Each of these `service groups` map to a specific request type. As of now they al
 
 The following statistics are collected from say `server1` for the `compose` request type:
 
-1. `requestCounter` - Number of requests of this type forwarded to this server
-2. `inBytes` and `outBytes` are self explanatory
-3. `Non 2xx/3xx responses` simply encompass all `1xx`, `4xx` and `5xx` responses from the backend.
-4. `requestMsecCounter` number of accumulated request processing time in milliseconds
-5. `maxFails` is the number of fails that must occur during `failTimeout` to mark the server unavailable.
-6. `backup` if the server is being used as a backup
-7. `down` if the server is marked as being unavailable.
+1. `inBytes` and `outBytes` are self explanatory
+2. `Non 2xx/3xx responses` simply encompass all `1xx`, `4xx` and `5xx` responses from the backend.
+3. `weight` of this particular server
+4. `requestMsec` is average response time
+
 
 We are using `weight` as our control; so it's not part of the `state`.
 
