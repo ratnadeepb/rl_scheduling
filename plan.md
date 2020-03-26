@@ -56,7 +56,7 @@ $T$ is the **_time interval at which the reward is measured_** and $N(T)$ is the
 
 where:
 
-$$p_j := \text{priority of task type j}$$
+$$p_j := \text{priority of task type j. For the moment the priorities are static and manually assigned.}$$
 $$c_j \in(1,2)$$
 $$\mu_{t_j} \text{is the mean of all tasks of type j completed when the scheduler was observing the system}$$
 $$\sigma_{t_j} \text{is the standard deviation of all tasks of type j completed when the scheduler was observing the system}$$
