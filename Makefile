@@ -18,6 +18,7 @@ gen_load.o: gen_load.c
 
 clean:
 	@rm -f *.o
+	@rm gen_load
 
 cleanall:
 	@make clean

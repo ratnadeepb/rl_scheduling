@@ -16,7 +16,7 @@
 #define UPPER_REQS 2000
 #define LOWER_SLEEP_TIME 10
 #define LOWER_EXEC_TIME 30
-#define LOWER_REQS 1000
+#define LOWER_REQS 100
 
 #define TEST_TIME                                                              \
         UPPER_EXEC_TIME * 6 *                                                  \
