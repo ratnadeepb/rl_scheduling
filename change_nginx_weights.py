@@ -1,7 +1,10 @@
-#
-# Created on Thu Feb 20 2020:16:42:22
-# Created by Ratnadeep Bhattacharya
-#
+'''
+ Created on Thu Feb 20 2020:16:42:22
+ Created by Ratnadeep Bhattacharya
+ This script gets the configuration of the /etc/nginx.conf file, updates the weights for the clusters randomly between weights taken from the CONTROL_VALS list and finally reloads nginx.
+ The parameters are hardcoded.
+ It needs nginx to be already running and root privileges.
+'''
 
 import nginxparser as ng
 # from itertools import combinations_with_replacement
@@ -13,6 +16,7 @@ import signal
 
 # 10 -> high share, 5 -> medium share, 2 -> low share
 NUM_CLUS = 3
+SRV_PER_CLUS = 3
 CONTROL_VALS = [1, 3, 5] * NUM_CLUS
 POSSIBLE_WEIGHTS = []
 COLS = []
@@ -22,7 +26,7 @@ COLS = []
 
 def gen_control_list():
     # comb = combinations_with_replacement(CONTROL_VALS, len(CONTROL_VALS))
-    perm = permutations(CONTROL_VALS, NUM_CLUS)
+    perm = permutations(CONTROL_VALS, NUM_CLUS * SRV_PER_CLUS)
     tmp = []
     for c in list(perm):
         tmp.append(c)
@@ -38,6 +42,10 @@ def gen_control_list():
 
 
 gen_control_list()
+
+for w in POSSIBLE_WEIGHTS:
+    if len(w) < SRV_PER_CLUS * NUM_CLUS:
+        POSSIBLE_WEIGHTS.remove(w)
 
 
 def change_weights(wait_time):
@@ -64,11 +72,13 @@ def change_weights(wait_time):
     # changing the weights
     while (1):
         for w in POSSIBLE_WEIGHTS:
+            w = list(w)  # added
             print("Running with", w)
             time.sleep(wait_time)
             for _, v in upstreams.items():
                 for i in range(len(v)):
-                    v[i][1] = "weight={}".format(w[i])
+                    # v[i][1] = "weight={}".format(w[i]) # added
+                    v[i][1] = "weight={}".format(w.pop())
             # formatting weights
             NEW_VALS = []
             for _, v in upstreams.items():
@@ -119,4 +129,4 @@ if __name__ == "__main__":
     print("CTRL + C to exit")
     print(wait, "seconds between changing weights")
     gen_control_list()
-    change_weights(5)
+    change_weights(wait)
