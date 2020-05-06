@@ -23,7 +23,8 @@ NUM_CLUS = 27
 
 ZONES = ['compose_backend', 'user_read_backend', 'home_read_backend']
 SERVERS = ['192.168.1.137:8080', '192.168.1.138:8080', '192.168.1.139:8080']
-METRICS = ['outBytes', 'inBytes', 'down', 'Non 2xx/3xx responses']
+METRICS = ['outBytes', 'inBytes', 'down',
+           'Non 2xx/3xx responses', 'requestMsec']
 CONNECTION_STATUS = ["active"]
 CONTROL = ['weight']
 '''

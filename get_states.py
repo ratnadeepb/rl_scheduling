@@ -1,6 +1,8 @@
 '''
  Created on Fri Feb 14 2020:18:43:20
  Created by Ratnadeep Bhattacharya
+ 
+ This script gets data from the nginx server; the IP is hard coded here; using the nginx-module-vts, to get stats about different upstream clusters.
 '''
 
 import requests

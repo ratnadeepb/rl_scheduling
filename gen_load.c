@@ -1,6 +1,11 @@
 /*
  * Created on Thu Feb 13 2020:16:54:18
  * Created by Ratnadeep Bhattacharya
+ * Starts four threads to compose a post, read a user's timeline, read
+ * another user's timeline and provide update on remaining time on the test.
+ * It uses the wrk benchmarking tool The tests are random
+ * The times, wrk command and IP addresses are hard coded and can be changed
+ * to use the script as is for any other application
  */
 
 #include <pthread.h>
